@@ -13,46 +13,6 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
-type omeka_search_text struct {
-	id          int64
-	record_type []byte
-	record_id   []byte
-	public      bool
-	title       string
-	text        string
-}
-
-type omeka_file struct {
-	id                   int
-	item_id              int
-	order                sql.NullInt64
-	size                 int
-	has_derivative_image bool
-	authentication       []byte
-	mime_type            []byte
-	type_os              []byte
-	filename             string
-	original_filename    string
-	modified             []byte
-	added                []byte
-	stored               bool
-	metadata             string
-}
-
-func cleanDirectory(baseDir string, suffixes []string) {
-	files, err := ioutil.ReadDir(baseDir)
-	for _, f := range files {
-		for _, s := range suffixes {
-			if strings.HasSuffix(f.Name(), s) {
-				err = os.Remove(baseDir + f.Name())
-				if err != nil {
-					panic(err)
-				}
-			}
-		}
-	}
-}
-
 func main() {
 	args := os.Args[1:]
 	username := args[0]

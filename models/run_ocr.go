@@ -111,7 +111,7 @@ func cleanDirectory(baseDir string, suffixes []string) {
 	}
 }
 
-func main() {
+func _main() {
 	args := os.Args[1:]
 	username := args[0]
 	password := args[1]
