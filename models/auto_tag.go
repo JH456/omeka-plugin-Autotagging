@@ -13,7 +13,7 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
-func main() {
+func _main() {
 	args := os.Args[1:]
 	username := args[0]
 	password := args[1]
