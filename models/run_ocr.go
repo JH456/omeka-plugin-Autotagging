@@ -116,6 +116,14 @@ func main() {
 	username := args[0]
 	password := args[1]
 	api_key := args[2]
+	start_index := "0"
+	if len(args) > 2 {
+		start_index_int, err := strconv.Atoi(args[3])
+		if err != nil {
+			panic(err)
+		}
+		start_index = strconv.Itoa(start_index_int)
+	}
 	db, err := sql.Open("mysql", username+":"+password+"@/omeka")
 	defer db.Close()
 	if err != nil {
@@ -124,7 +132,9 @@ func main() {
 		fmt.Println("Connection established.")
 	}
 
-	results, err := db.Query("SELECT * FROM omeka_files")
+	results, err := db.Query(
+		"SELECT * FROM omeka_files WHERE id>=" + start_index,
+	)
 	if err != nil {
 		panic(err)
 	}
@@ -152,6 +162,7 @@ func main() {
 		}
 
 		fmt.Println(o.original_filename)
+		fmt.Println("File id:", o.id)
 		filename := "http://localhost/files/original/" + o.filename
 		text := ToOcr(filename)
 
