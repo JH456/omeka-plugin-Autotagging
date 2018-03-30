@@ -33,14 +33,19 @@ def tag_document(id, api_key,
             for e in set(t for t in text.ents if str(t).strip()):
                 if e.label_ in entity_mapping:
                     label = entity_mapping[e.label_]
-                    tags.append(label + ': ' + ' '.join(str(e).lower().split()))
+                    tags.append(label + ': ' +
+                                ' '.join(str(e).lower().split()))
 
             for tag in tags:
                 item['tags'].append({'resource': 'tags', 'name': tag})
 
-    req = requests.post(url + '?key=' + api_key, json=item)
+    req = requests.put(url + str(id) + '?key=' + api_key, json=item)
+
+
+def td(d):
+    tag_document(d, 'aa516a5f41a594de03b8d9ed1552dc5847a6ac9a')
 
 
 if __name__ == "__main__":
-    [tag_document(d, 'aa516a5f41a594de03b8d9ed1552dc5847a6ac9a') for d in range(1, 1000)]
-
+    pool = Pool(processes=32)
+    pool.map(td, range(0, 12000))
