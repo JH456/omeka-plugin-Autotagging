@@ -1,17 +1,16 @@
 import spacy
 import requests
-from multiprocessing import Pool
 
 
 nlp = spacy.load('en_core_web_sm')
 
 
-def tag_document(id, api_key,
-                 url='http://allenarchive-dev.iac.gatech.edu/api/items/'):
+def tag_document(id, api_key, url):
     eqs = '===================================================================='
     print(eqs)
     print('Document', id)
     print(eqs)
+    url = url.rstrip('/') + '/api/'
     req = requests.get(url + str(id))
     item = req.json()
     entity_mapping = {
@@ -42,10 +41,21 @@ def tag_document(id, api_key,
     req = requests.put(url + str(id) + '?key=' + api_key, json=item)
 
 
-def td(d):
-    tag_document(d, 'aa516a5f41a594de03b8d9ed1552dc5847a6ac9a')
-
-
 if __name__ == "__main__":
-    pool = Pool(processes=32)
-    pool.map(td, range(0, 12000))
+    parser = argparse.ArgumentParser(
+        description='Generate NER tags on a set of Omeka items.'
+    )
+    parser.add_argument('url', help='Base URL for the Omeka instance')
+    parser.add_argument('key', help='API key for the Omeka instance')
+    parser.add_argument('-s', '--start',
+                        help='Document ID where tagging should begin',
+                        type=int, default=0)
+    parser.add_argument('-e', '--end',
+                        help='Document ID where tagging should end',
+                        type=int, default=100000)
+
+    args = parser.parse_args()
+    api_key = args.key
+
+    for i in range(args.start, args.end):
+        tag_document(i, args.key, args.url)

@@ -2,7 +2,6 @@ import requests
 import os
 import argparse
 from subprocess import call
-from multiprocessing import Pool
 
 
 def file_key(f):
