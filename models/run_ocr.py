@@ -1,5 +1,6 @@
 import requests
 import os
+import argparse
 from subprocess import call
 from multiprocessing import Pool
 
@@ -49,12 +50,12 @@ def to_ocr(pdf_path):
     return text
 
 
-def update_document_ocr(id, api_key,
-                        url='http://allenarchive-dev.iac.gatech.edu/api/'):
+def update_document_ocr(id, api_key=None, url=None):
     eqs = '===================================================================='
     print(eqs)
     print('Document', id)
     print(eqs)
+    url = url.rstrip('/') + '/api/'
     req = requests.get(url + 'files/' + str(id))
     if len(req.content) > 50000:
         return
@@ -86,5 +87,18 @@ def update_document_ocr(id, api_key,
 
 
 if __name__ == "__main__":
-    for i in range(9700, 12000):
-        update_document_ocr(i, 'aa516a5f41a594de03b8d9ed1552dc5847a6ac9a')
+    parser = argparse.ArgumentParser(
+        description='Run OCR on a set of Omeka pdfs.'
+    )
+    parser.add_argument('url', help='Base URL for the Omeka instance')
+    parser.add_argument('key', help='API key for the Omeka instance')
+    parser.add_argument('-s', '--start',
+                        help='Document ID where OCR should begin',
+                        type=int, default=0)
+    parser.add_argument('-e', '--end',
+                        help='Document ID where OCR should end',
+                        type=int, default=100000)
+
+    args = parser.parse_args()
+    for i in range(args.start, args.end):
+        update_document_ocr(i, url=args.url, api_key=args.key)
