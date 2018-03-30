@@ -56,6 +56,8 @@ def update_document_ocr(id, api_key,
     print('Document', id)
     print(eqs)
     req = requests.get(url + 'files/' + str(id))
+    if len(req.content) > 50000:
+        return
     item = req.json()
     print('file retrieved')
 
@@ -84,5 +86,5 @@ def update_document_ocr(id, api_key,
 
 
 if __name__ == "__main__":
-    for i in range(1200, 12000):
+    for i in range(9700, 12000):
         update_document_ocr(i, 'aa516a5f41a594de03b8d9ed1552dc5847a6ac9a')
