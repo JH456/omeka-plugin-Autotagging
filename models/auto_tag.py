@@ -1,5 +1,6 @@
 import spacy
 import requests
+import argparse
 
 
 nlp = spacy.load('en_core_web_sm')
@@ -11,8 +12,11 @@ def tag_document(id, api_key, url):
     print('Document', id)
     print(eqs)
     url = url.rstrip('/') + '/api/'
-    req = requests.get(url + str(id))
+    req = requests.get(url + 'items/' + str(id))
     item = req.json()
+    if 'message' in item and item['message'].endswith('Record not found.'):
+        print('Record with id ' + str(id) + ' could not be found.')
+        return
     entity_mapping = {
         'PERSON': 'Person',
         'FACILITY': 'Facility',
@@ -38,7 +42,7 @@ def tag_document(id, api_key, url):
             for tag in tags:
                 item['tags'].append({'resource': 'tags', 'name': tag})
 
-    req = requests.put(url + str(id) + '?key=' + api_key, json=item)
+    req = requests.put(url + 'items/' + str(id) + '?key=' + api_key, json=item)
 
 
 if __name__ == "__main__":
