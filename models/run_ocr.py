@@ -20,8 +20,8 @@ def clean_dir(path):
         os.mkdir(path)
 
 
-def to_ocr(pdf_path):
-    base_dir = '/tmp/pdf_to_ocr_out/'
+def to_ocr(pdf_path, id):
+    base_dir = '/tmp/pdf_to_ocr_out_' + str(id) + '/'
     clean_dir(base_dir)
 
     assert os.path.exists(base_dir)
@@ -45,6 +45,7 @@ def to_ocr(pdf_path):
     print('ocr done')
 
     clean_dir(base_dir)
+    os.removedirs(base_dir)
 
     return text
 
@@ -61,14 +62,16 @@ def update_document_ocr(id, api_key=None, url=None):
     item = req.json()
     print('file retrieved')
 
-    pdf_path = '/tmp/ocr_pdf_out.pdf'
+    pdf_path = '/tmp/ocr_pdf_out_' + str(id) + '.pdf'
     if 'file_urls' in item:
         pdf = requests.get(item['file_urls']['original'])
         with open(pdf_path, 'wb') as out:
             out.write(pdf.content)
             print('pdf written')
 
-    ocr_text = to_ocr(pdf_path)
+    ocr_text = to_ocr(pdf_path, id)
+
+    os.remove(pdf_path)
 
     req = requests.get(url + 'items/' + str(id))
     item = req.json()
