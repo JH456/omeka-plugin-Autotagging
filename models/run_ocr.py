@@ -28,7 +28,8 @@ def to_ocr(pdf_path, id):
     assert len(os.listdir(base_dir)) == 0
 
     image_out = base_dir + 'out.png'
-    command = 'convert -density 300 ' + pdf_path + ' -quality 100 ' + image_out
+    command = 'convert -density 300 -units PixelsPerInch '\
+        + pdf_path + ' -quality 100 ' + image_out
     call(command.split())
     print('image conversion done')
 
@@ -60,6 +61,9 @@ def update_document_ocr(id, api_key=None, url=None):
     if len(req.content) > 50000:
         return
     item = req.json()
+    if 'message' in item and item['message'].endswith('Record not found.'):
+        print('Record with id ' + str(id) + ' could not be found.')
+        return
     print('file retrieved')
 
     pdf_path = '/tmp/ocr_pdf_out_' + str(id) + '.pdf'
@@ -83,6 +87,26 @@ def update_document_ocr(id, api_key=None, url=None):
         if element_text['element']['name'] == 'Text' \
                 and element_text['element_set']['name'] == 'Item Type Metadata':
             item['element_texts'][i]['text'] = ocr_text
+            break
+    else:
+        print('Could not find Text element for document ' + str(id))
+        print('Generating Text element from scratch.')
+        item['element_texts'].append({
+            'html': False,
+            'text': ocr_text,
+            'element_set': {
+                'id': 3,
+                'url': url + 'element_sets/3',
+                'name': 'Item Type Metadata',
+                'resource': 'element_sets'
+            },
+            'element': {
+                'id': 1,
+                'url': url + 'elements/1',
+                'name': 'Text',
+                'resource': 'elements'
+            }
+        })
 
     req = requests.put(url + 'items/' + str(id) + '?key=' + api_key, json=item)
     print('update request sent')
