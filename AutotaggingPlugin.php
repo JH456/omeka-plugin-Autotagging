@@ -14,11 +14,7 @@ class AutotaggingPlugin extends Omeka_Plugin_AbstractPlugin
      * @var array Hooks for the plugin.
      */
     protected $_hooks = array(
-        'config_form',
-        'public_items_show',
-        'admin_items_show',
-        'public_items_browse_each',
-        'admin_items_browse_simple_each'
+        'config_form'
     );
 
     /**
@@ -32,26 +28,6 @@ class AutotaggingPlugin extends Omeka_Plugin_AbstractPlugin
     public function hookConfigForm()
     {
         require dirname(__FILE__) . '/config_form.php';
-    }
-
-    public function hookPublicItemsShow()
-    {
-        echo '<strong>public items show</strong>';
-    }
-    
-    public function hookAdminItemsShow()
-    {
-        echo '<strong>admin items show</strong>';
-    }
-    
-    public function hookPublicItemsBrowseEach()
-    {
-        echo '<strong>public items browse each</strong>';
-    }
-    
-    public function hookAdminItemsBrowseSimpleEach()
-    {
-        echo '<strong>admin items browse simple each</strong>';
     }
 
     /**
