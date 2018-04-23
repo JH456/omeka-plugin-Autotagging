@@ -1,7 +1,7 @@
-import spacy
-import requests
 import argparse
 
+import requests
+import spacy
 
 nlp = spacy.load('en_core_web_sm')
 
@@ -20,6 +20,7 @@ def tag_document(id, api_key, url):
     entity_mapping = {
         'PERSON': 'Person',
         'FACILITY': 'Facility',
+        'DATE': 'Date',
         'ORG': 'Organization',
         'GPE': 'Geopolitical Entity',
         'LCO': 'Location',
