@@ -12,7 +12,7 @@
                 'action': 'tag',
                 'start': document.getElementById('start').value,
                 'end': document.getElementById('end').value,
-                'url': '<?php url('')?>',
+                'url': "<?php echo rtrim(absolute_url(""), "admin/") ?>",
                 'api_key': document.getElementById('api_key').value
             };
             var status = document.getElementById('status');

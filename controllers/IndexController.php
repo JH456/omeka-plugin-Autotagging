@@ -13,23 +13,24 @@
 class Autotagging_IndexController extends Omeka_Controller_AbstractActionController
 {
     public function browseAction()
-    {}
+    {
+
+    }
 
     public function autotagAction()
     {
-        $start = 0;
-        $end = 0;
+        $start = isset($_POST['start']) ? $_POST['start'] : 0;
+        $end = isset($_POST['end']) ? $_POST['end'] : 0;
+        $url = isset($_POST['url']) ? $_POST['url'] : url('');
 
-        if (isset($_POST['start'])) {
-            $start = $_POST['start'];
-        }
-
-        if (isset($_POST['end'])) {
-            $end = $_POST['end'];
+        if (isset($_POST['api_key'])) {
+            $api_key = $_POST['api_key'];
+        } else {
+            echo "No API key proveded. An API key must be provided for tagging.";
         }
 
         $script = "python3 /var/www/html/plugins/Autotagging/libraries/autotagging/auto_tag.py";
-        $args = "http://allenarchive-dev.iac.gatech.edu/ 030c516f3f818bb10793ff6c965489c69647129d -s {$start} -e {$end}";
+        $args = "{$url} {$api_key} -s {$start} -e {$end}";
         $command = "$script $args";
         $out = [];
         $status = [];
