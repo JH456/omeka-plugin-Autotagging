@@ -1,4 +1,5 @@
 import argparse
+import json
 
 import nltk
 import requests
@@ -63,8 +64,9 @@ def tag_document(id, api_key, url, label_mapping,
             for tag in tags:
                 item['tags'].append({'resource': 'tags', 'name': tag})
 
+    print('tags:', json.dumps(item['tags'], sort_keys=True, indent=4))
     req = requests.put(url + 'items/' + str(id) + '?key=' + api_key, json=item)
-
+    print('update request sent')
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(

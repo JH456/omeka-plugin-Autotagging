@@ -8,30 +8,34 @@
         };
 
         var autoTagDocuments = function() {
-            var data = {
-                'action': 'tag',
-                'start': document.getElementById('start').value,
-                'end': document.getElementById('end').value,
-                'url': "<?php echo rtrim(absolute_url(""), "admin/") ?>",
-                'api_key': document.getElementById('api_key').value
-            };
-            var status = document.getElementById('status');
-            status.innerHTML = '<strong>Status: In progress.</strong>';
-            status.style.display = 'block';
             var details = document.getElementById('details');
-            jQuery.post('/admin/autotagging/index/autotag', data, function (response) {
-                details.innerHTML = response;
-                status.innerHTML = '<strong>Status: Done tagging.';
-                var expander = document.getElementById('details_expander');
-                expander.style.display = 'block';
-                expander.onclick = function() {
-                    if (details.style.display === 'none') {
-                        details.style.display = 'block';
-                    } else {
-                        details.style.display = 'none';
-                    }
+            var start = document.getElementById('start').value;
+            var end = document.getElementById('end').value;
+            for (var i = start; i <= end; i++) {
+                var data = {
+                    'action': 'tag',
+                    'start': i,
+                    'end': i + 1,
+                    'url': "<?php echo rtrim(absolute_url(""), "admin/") ?>",
+                    'api_key': document.getElementById('api_key').value
                 };
-            });
+                var status = document.getElementById('status');
+                status.innerHTML = '<strong>Status: In progress.</strong>';
+                status.style.display = 'block';
+                jQuery.post('/admin/autotagging/index/autotag', data, function (response) {
+                    details.innerHTML += response;
+                    status.innerHTML = '<strong>Status: Done tagging.';
+                    var expander = document.getElementById('details_expander');
+                    expander.style.display = 'block';
+                    expander.onclick = function() {
+                        if (details.style.display === 'none') {
+                            details.style.display = 'block';
+                        } else {
+                            details.style.display = 'none';
+                        }
+                    };
+               });
+            }
         };
     </script>
 </head>
