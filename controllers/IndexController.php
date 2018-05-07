@@ -13,16 +13,29 @@
 class Autotagging_IndexController extends Omeka_Controller_AbstractActionController
 {
     public function browseAction()
+    {}
+
+    public function autotagAction()
     {
-        // If we want, we can assign variables here. Like, if we assign nodes
-        // to something, in views/scripts/browse.php we will have $nodes
-        // defined with that value.
-        // If we want to do any server side processing (like database queries)
-        // we should do them in this file, and then pass the results to the
-        // view like this:
-        // You can take a look at
-        // application/libraries/Omeka/Controller/AbstractActionController.php
-        // to see how to run database queries and the like, but I think we
-        // are mostly going to be doing stuff with elastic search here
+        $start = 0;
+        $end = 0;
+
+        if (isset($_POST['start'])) {
+            $start = $_POST['start'];
+        }
+
+        if (isset($_POST['end'])) {
+            $end = $_POST['end'];
+        }
+
+        $script = "python3 /var/www/html/plugins/Autotagging/libraries/autotagging/auto_tag.py";
+        $args = "http://allenarchive-dev.iac.gatech.edu/ 030c516f3f818bb10793ff6c965489c69647129d -s {$start} -e {$end}";
+        $command = "$script $args";
+        $out = [];
+        $status = [];
+        exec($command, $out, $status);
+        foreach ($out as $value) {
+            echo ("$value\n");
+        }
     }
 }
